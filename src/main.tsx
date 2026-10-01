@@ -1,5 +1,13 @@
+// Modified by SAIPH: branding, typography, and theme integration.
 import { createRoot } from 'react-dom/client';
 import "@evoapi/design-system/styles";
+// Modified by SAIPH: self-hosted product typography and canonical theme adapter.
+import '@fontsource/montserrat/latin-500.css';
+import '@fontsource/montserrat/latin-600.css';
+import '@fontsource/roboto/latin-400.css';
+import '@fontsource/roboto/latin-500.css';
+import './styles/saiph-tokens.css';
+import './styles/saiph-theme-adapter.css';
 import './styles/globals.css';
 import './i18n/config'; // Importar configuração do i18n
 import App from './App.tsx';

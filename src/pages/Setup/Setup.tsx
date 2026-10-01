@@ -1,3 +1,4 @@
+// Modified by SAIPH: branded setup surface and three-mode theme selector.
 import React, { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -25,6 +26,7 @@ import { setupService } from '@/services/setup/setupService';
 import { clearSetupCache } from '@/contexts/GlobalConfigContext';
 
 import { AppLogo } from '@/components/AppLogo';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 type SetupFormData = {
   first_name: string;
@@ -104,7 +106,8 @@ const Setup: React.FC = () => {
       } else {
         navigate('/login', { replace: true });
       }
-    } catch (err: any) {
+    } catch (caught: unknown) {
+      const err = caught as { response?: { status?: number; data?: { error?: string } }; message?: string };
       const message =
         err?.response?.data?.error || err?.message || t('error.generic');
 
@@ -123,8 +126,9 @@ const Setup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-t from-primary/20 via-background/95 to-background">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4" data-saiph-login>
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <ThemeToggle />
         <Select value={currentLanguage} onValueChange={handleLanguageChange}>
           <SelectTrigger>
             <Globe className="h-4 w-4 text-primary" />
@@ -149,7 +153,7 @@ const Setup: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-background/80 backdrop-blur-sm border rounded-lg p-6 shadow-lg">
+        <div className="border p-6" data-saiph-login-card>
           {error && (
             <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />

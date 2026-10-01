@@ -26,20 +26,20 @@ export default function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className={cn(
-      "flex flex-col items-center justify-center py-16 px-6 text-center",
+      "saiph-state-panel border-dashed",
       className
-    )}>
+    )} role="status">
       {Icon && (
-        <div className="mb-6">
-          <Icon className="h-16 w-16 text-muted-foreground/60" />
+        <div className="saiph-state-icon" aria-hidden="true">
+          <Icon className="h-6 w-6" />
         </div>
       )}
 
-      <h3 className="text-xl font-semibold text-foreground mb-2">
+      <h2 className="text-lg font-semibold text-foreground">
         {title}
-      </h3>
+      </h2>
 
-      <p className="text-muted-foreground max-w-md mb-6">
+      <p className="text-sm leading-6 text-muted-foreground max-w-md">
         {description}
       </p>
 

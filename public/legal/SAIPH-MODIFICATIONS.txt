@@ -1,0 +1,5 @@
+SAIPH Flow frontend modifications
+Upstream frontend: https://github.com/evolution-foundation/evo-ai-frontend-community.git
+Upstream commit: abd6d5a05181adda8e18150b61c99151ea897fec
+Changes: product branding, theme architecture, semantic design tokens, navigation and accessibility refinements, tenant-scoped company surfaces, Super Admin surfaces, knowledge base, agent behavior, human handoff controls, usage dashboards, versioned plan catalog, onboarding, implementation briefing, dashboard composition and dependency security updates.
+Evo CRM and Evolution attribution and license notices are preserved in this directory.

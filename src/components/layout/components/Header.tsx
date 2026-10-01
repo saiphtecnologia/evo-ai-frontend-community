@@ -1,3 +1,4 @@
+// Modified by SAIPH: branded topbar and theme control surface.
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -74,7 +75,7 @@ export default function Header({
   const [expandedMobileMenus, setExpandedMobileMenus] = useState<Set<string>>(new Set());
 
   return (
-    <div className="flex-shrink-0 bg-sidebar border-b border-sidebar-border px-0 py-3 flex items-center shadow-sm">
+    <div className="flex-shrink-0 bg-sidebar border-b border-sidebar-border px-0 py-3 flex items-center shadow-sm" data-saiph-topbar>
       {/* Mobile Layout */}
       <div className="md:hidden flex items-center w-full px-4">
         {/* Left: Menu Button */}

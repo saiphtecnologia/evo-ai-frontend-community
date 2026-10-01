@@ -1,8 +1,12 @@
 import { NavLink, Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Mail, MailOpen, HardDrive, KeyRound, MessageSquare, Sparkles, Puzzle, Globe } from 'lucide-react';
+import { Mail, MailOpen, HardDrive, KeyRound, MessageSquare, Sparkles, Puzzle, Globe, Gauge, Boxes, Building2, LayoutDashboard } from 'lucide-react';
 
 const navItems = [
+  { key: 'dashboard', path: '/settings/admin/dashboard', icon: LayoutDashboard },
+  { key: 'companies', path: '/settings/admin/companies/new', icon: Building2 },
+  { key: 'plans', path: '/settings/admin/plans', icon: Boxes },
+  { key: 'usage', path: '/settings/admin/usage', icon: Gauge },
   { key: 'email', path: '/settings/admin/email', icon: Mail },
   { key: 'storage', path: '/settings/admin/storage', icon: HardDrive },
   { key: 'socialLogin', path: '/settings/admin/social-login', icon: KeyRound },
@@ -18,7 +22,7 @@ export default function AdminSettingsLayout() {
   const location = useLocation();
 
   if (location.pathname === '/settings/admin' || location.pathname === '/settings/admin/') {
-    return <Navigate to="/settings/admin/email" replace />;
+    return <Navigate to="/settings/admin/dashboard" replace />;
   }
 
   return (
@@ -41,7 +45,7 @@ export default function AdminSettingsLayout() {
               }
             >
               <Icon className="h-4 w-4" />
-              {t(`navigation.${key}`)}
+              {key === 'dashboard' ? 'Dashboard' : key === 'companies' ? 'Empresas' : key === 'usage' ? 'Franquia' : key === 'plans' ? 'Planos' : t(`navigation.${key}`)}
             </NavLink>
           ))}
         </nav>

@@ -16,6 +16,7 @@ import {
 } from '@evoapi/design-system';
 import { MoreHorizontal, ArrowUpDown, ArrowUp, ArrowDown, LucideIcon } from 'lucide-react';
 import EmptyState from './EmptyState';
+import { LoadingState } from './AsyncState';
 
 export interface TableColumn<T> {
   key: string;
@@ -60,7 +61,7 @@ export interface BaseTableProps<T> {
   className?: string;
 }
 
-export default function BaseTable<T extends Record<string, any>>({
+export default function BaseTable<T extends object>({
   data,
   columns,
   actions,
@@ -117,6 +118,7 @@ export default function BaseTable<T extends Record<string, any>>({
           size="sm"
           className="ml-2 h-8 px-2 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
           onClick={() => onSort(column.key)}
+          aria-label={`Ordenar por ${column.label}`}
         >
           <ArrowUpDown className="h-4 w-4" />
         </Button>
@@ -129,6 +131,7 @@ export default function BaseTable<T extends Record<string, any>>({
         size="sm"
         className="ml-2 h-8 px-2 text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent"
         onClick={() => onSort(column.key)}
+        aria-label={`Ordenar por ${column.label}, atualmente ${sortOrder === 'asc' ? 'crescente' : 'decrescente'}`}
       >
         {sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
       </Button>
@@ -140,7 +143,7 @@ export default function BaseTable<T extends Record<string, any>>({
       return column.render(item, index);
     }
 
-    const value = item[column.key];
+    const value = (item as Record<string, unknown>)[column.key];
     if (value === null || value === undefined) return '-';
     if (typeof value === 'boolean') return value ? t('base.table.yes') : t('base.table.no');
     return String(value);
@@ -160,6 +163,7 @@ export default function BaseTable<T extends Record<string, any>>({
             variant="ghost"
             size="sm"
             className="h-8 w-8 p-0 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            aria-label={`Ações para ${String(getRowKey(item))}`}
           >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
@@ -173,7 +177,7 @@ export default function BaseTable<T extends Record<string, any>>({
               key={index}
               onClick={() => action.onClick(item)}
               className={`hover:bg-sidebar-accent ${
-                action.variant === 'destructive' ? 'text-red-400' : 'text-sidebar-foreground'
+                action.variant === 'destructive' ? 'text-destructive' : 'text-sidebar-foreground'
               }`}
             >
               {action.icon && <span className="mr-2">{action.icon}</span>}
@@ -187,9 +191,7 @@ export default function BaseTable<T extends Record<string, any>>({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12 bg-sidebar rounded-lg border border-sidebar-border">
-        <div className="text-sidebar-foreground/70">{t('base.table.loading')}</div>
-      </div>
+      <LoadingState label={t('base.table.loading')} compact />
     );
   }
 
@@ -217,7 +219,9 @@ export default function BaseTable<T extends Record<string, any>>({
 
   return (
     <div
-      className={`rounded-lg border border-sidebar-border bg-sidebar overflow-hidden ${className}`}
+      className={`rounded-lg border border-sidebar-border bg-sidebar overflow-x-auto ${className}`}
+      tabIndex={0}
+      aria-label="Tabela com rolagem horizontal quando necessário"
     >
       <Table>
         <TableHeader>
@@ -237,6 +241,15 @@ export default function BaseTable<T extends Record<string, any>>({
                 key={column.key}
                 className={`${column.width} text-sidebar-foreground bg-sidebar-accent/30 font-medium`}
                 align={column.align}
+                aria-sort={
+                  sortBy === column.key
+                    ? sortOrder === 'asc'
+                      ? 'ascending'
+                      : 'descending'
+                    : column.sortable
+                      ? 'none'
+                      : undefined
+                }
               >
                 <div className="flex items-center">
                   {column.label}
@@ -262,6 +275,7 @@ export default function BaseTable<T extends Record<string, any>>({
                 className={`border-sidebar-border hover:bg-sidebar-accent/30 ${
                   isSelected ? 'bg-sidebar-accent/40' : ''
                 }`}
+                data-state={isSelected ? 'selected' : undefined}
               >
                 {selectable && (
                   <TableCell>

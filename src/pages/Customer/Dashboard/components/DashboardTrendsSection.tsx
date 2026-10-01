@@ -44,9 +44,9 @@ const DashboardTrendsSection = ({ data, t, channelShareData }: DashboardTrendsSe
             description={t('dashboard.charts.visitorsDescription') || 'Tendência diária de conversas no período'}
             data={data.trends.conversations_daily}
             icon={TrendingUp}
-            color="#22c55e"
-            gradientFrom="#22c55e"
-            gradientTo="#10b981"
+            color="var(--saiph-chart-1)"
+            gradientFrom="var(--saiph-chart-1)"
+            gradientTo="var(--saiph-chart-2)"
             valueFormatter={value => value.toFixed(0)}
             tooltip={{ title: tTours('dashboard.step9.title'), content: tTours('dashboard.step9.content') }}
           />
@@ -58,9 +58,9 @@ const DashboardTrendsSection = ({ data, t, channelShareData }: DashboardTrendsSe
             description={responseTimeCardDescription}
             data={data.trends.response_time_daily}
             icon={BarChart3}
-            color="#3b82f6"
-            gradientFrom="#3b82f6"
-            gradientTo="#8b5cf6"
+            color="var(--saiph-chart-2)"
+            gradientFrom="var(--saiph-chart-2)"
+            gradientTo="var(--saiph-chart-3)"
             valueFormatter={value => `${Math.round(value)}s`}
             highlightMax
             tooltip={{ title: tTours('dashboard.step10.title'), content: tTours('dashboard.step10.content') }}
@@ -75,8 +75,8 @@ const DashboardTrendsSection = ({ data, t, channelShareData }: DashboardTrendsSe
             description={t('dashboard.charts.channelShareDescription') || 'Distribuição percentual de conversas por canal'}
             data={channelShareData}
             icon={Layers}
-            gradientFrom="#ec4899"
-            gradientTo="#8b5cf6"
+            gradientFrom="var(--saiph-chart-4)"
+            gradientTo="var(--saiph-chart-3)"
             centerLabel={tx('dashboard.charts.channelsLabel', 'Canais')}
             centerValue={tx('dashboard.charts.shareLabel', 'Participação')}
             tooltip={{ title: tTours('dashboard.step11.title'), content: tTours('dashboard.step11.content') }}

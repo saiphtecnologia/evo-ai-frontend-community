@@ -50,6 +50,10 @@ import { BaseFilter } from '@/types/core';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useDebounce } from '@/hooks/useDebounce';
 import chatService from '@/services/chat/chatService';
+import HandoffFilterBar, {
+  type ActiveHandoffFilter,
+} from '@/components/chat/handoff/HandoffFilterBar';
+import { getConversationHandoffState } from '@/components/chat/handoff/handoffState';
 import type {
   SearchConversationResult,
   SearchContactResult,
@@ -131,6 +135,7 @@ const ChatSidebar = ({
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [isLoadingMoreConversations, setIsLoadingMoreConversations] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
+  const [handoffFilter, setHandoffFilter] = useState<ActiveHandoffFilter>(null);
   const sidebarScrollRef = useRef<HTMLDivElement | null>(null);
   const loadingMoreRef = useRef(false);
 
@@ -278,6 +283,9 @@ const ChatSidebar = ({
   const visibleConversations = useMemo(() => {
     const filtered = conversations.state.conversations.filter(conversation => {
       const isArchived = Boolean(conversation.custom_attributes?.archived);
+      if (handoffFilter && getConversationHandoffState(conversation) !== handoffFilter) {
+        return false;
+      }
       return showArchived ? isArchived : !isArchived;
     });
 
@@ -308,7 +316,7 @@ const ChatSidebar = ({
       }
       return getSortTimestamp(b) - getSortTimestamp(a);
     });
-  }, [conversations.state.conversations, showArchived]);
+  }, [conversations.state.conversations, handoffFilter, showArchived]);
 
   const stripHtml = (html: string): string => {
     if (!html) return '';
@@ -588,6 +596,8 @@ const ChatSidebar = ({
     >
       {/* Search and Filter Header */}
       <div className="p-4 border-b space-y-3">
+        <HandoffFilterBar value={handoffFilter} onChange={setHandoffFilter} />
+
         {/* Search */}
         <div className="relative" data-tour="chat-search">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground z-10" />

@@ -36,6 +36,7 @@ import ChatSidebar from '@/components/chat/chat-sidebar/ChatSidebar';
 import ChatHeader from '@/components/chat/chat-header/ChatHeader';
 import ChatArea from '@/components/chat/chat-area/ChatArea';
 import ChatTabs from '@/components/chat/chat-tabs/ChatTabs';
+import HandoffControls from '@/components/chat/handoff/HandoffControls';
 
 import { AlertTriangle, Trash2 } from 'lucide-react';
 
@@ -744,6 +745,11 @@ const Chat = () => {
                 onAssignTag={handleAssignTag}
                 onDeleteConversation={handleDeleteConversation}
                 unreadCount={conversations.getUnreadCount(selectedConversation.id) || 0}
+              />
+
+              <HandoffControls
+                conversation={selectedConversation}
+                onChanged={conversations.updateConversation}
               />
 
               {/* Chat Tabs - Show tabs for conversation type dashboard apps */}

@@ -27,6 +27,10 @@ export type MessageTypeValue = 'incoming' | 'outgoing' | 'activity' | 'template'
 export interface Conversation {
   id: string;
   uuid?: string;
+  handoff_state?: 'AI_ACTIVE' | 'WAITING_HUMAN' | 'HUMAN_ACTIVE' | 'CLOSED';
+  handoff_version?: number;
+  handoff_reason?: string | null;
+  handoff_assigned_user_id?: string | null;
   inbox_id: string;
   inbox_name?: string;
   status: 'open' | 'resolved' | 'pending' | 'snoozed';

@@ -16,6 +16,8 @@
     "@evoapi/design-system": "^0.0.6",
     "@ffmpeg/core-st": "0.11.0",
     "@ffmpeg/ffmpeg": "^0.11.6",
+    "@fontsource/montserrat": "^5.2.8",
+    "@fontsource/roboto": "^5.2.8",
     "@hookform/resolvers": "^5.0.1",
     "@icons-pack/react-simple-icons": "^13.13.0",
     "@rails/actioncable": "^8.0.201",
@@ -77,6 +79,6 @@
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.26.1",
     "vite": "^6.3.1",
-    "vitest": "^2.1.8"
+    "vitest": "^4.1.11"
   }
 }

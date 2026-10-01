@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,7 +12,7 @@ import {
   Button,
 } from '@evoapi/design-system';
 import { Grid3X3, List, Users } from 'lucide-react';
-import EmptyState from '@/components/base/EmptyState';
+import { EmptyState, ErrorState, LoadingState } from '@/components/base';
 
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { contactsService } from '@/services/contacts';
@@ -84,11 +84,14 @@ export default function Contacts() {
   const [eventsContact, setEventsContact] = useState<Contact | null>(null);
   const [mergeModalOpen, setMergeModalOpen] = useState(false);
   const [contactsToMerge, setContactsToMerge] = useState<Contact[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load contacts
   const loadContacts = useCallback(
     async (params?: Partial<ContactsListParams>) => {
       setState(prev => ({ ...prev, loading: { ...prev.loading, list: true } }));
+      setLoadError(null);
 
       try {
         const requestParams: ContactsListParams = {
@@ -129,6 +132,7 @@ export default function Contacts() {
         }
 
         toast.error(t('messages.loadError'));
+        setLoadError(t('messages.loadError'));
         setState(prev => ({ ...prev, loading: { ...prev.loading, list: false } }));
       }
     },
@@ -139,6 +143,7 @@ export default function Contacts() {
   const loadContactsWithSearch = useCallback(
     async (query: string, params?: { page?: number; per_page?: number }) => {
       setState(prev => ({ ...prev, loading: { ...prev.loading, list: true } }));
+      setLoadError(null);
 
       try {
         const searchParams = {
@@ -172,6 +177,7 @@ export default function Contacts() {
       } catch (error) {
         console.error('Error searching contacts:', error);
         toast.error(t('messages.searchError'));
+        setLoadError(t('messages.searchError'));
         setState(prev => ({ ...prev, loading: { ...prev.loading, list: false } }));
       }
     },
@@ -185,7 +191,11 @@ export default function Contacts() {
     }
 
     loadContacts();
-  }, [permissionsReady]);
+  }, [permissionsReady, loadContacts]);
+
+  useEffect(() => () => {
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+  }, []);
 
   useEffect(() => {
     if (!contactIdFromRoute) return;
@@ -224,15 +234,14 @@ export default function Contacts() {
     }));
 
     // Debounce search
-    const timeoutId = setTimeout(() => {
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(() => {
       if (query.trim()) {
         loadContactsWithSearch(query.trim());
       } else {
         loadContacts({ page: 1 });
       }
     }, 500);
-
-    return () => clearTimeout(timeoutId);
   };
 
   // removed unused
@@ -254,13 +263,13 @@ export default function Contacts() {
   // Backend expects payload (not filters) and query_operator in uppercase (AND/OR)
   const buildFilterPayload = (filters: BaseFilter[]) => {
     const filterQuery = generateFilterQuery(filters);
-    
+
     return filterQuery.map((filter, index) => {
       const isLastFilter = index === filterQuery.length - 1;
-      const queryOperator = isLastFilter 
-        ? null 
+      const queryOperator = isLastFilter
+        ? null
         : (filter.query_operator.toUpperCase() as 'AND' | 'OR');
-      
+
       return {
         attribute_key: filter.attribute_key,
         values: filter.values,
@@ -724,7 +733,7 @@ export default function Contacts() {
   };
 
   return (
-    <div className="h-full flex flex-col p-4">
+    <main className="saiph-page h-full flex flex-col">
       <ContactsTour />
       <div data-tour="contacts-header">
       <ContactsHeader
@@ -746,22 +755,28 @@ export default function Contacts() {
 
       {/* View Mode Toggle */}
       <div className="flex items-center justify-end mb-3" data-tour="contacts-view-toggle">
-        <div className="flex items-center border rounded-lg">
+        <div className="saiph-segmented-control" role="group" aria-label="Modo de visualização dos contatos">
           <Button
             variant={viewMode === 'cards' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('cards')}
-            className="border-0 rounded-r-none"
+            className="h-9 w-9 border-0 p-0"
+            aria-label="Visualizar contatos em cartões"
+            aria-pressed={viewMode === 'cards'}
+            title="Cartões"
           >
-            <Grid3X3 className="h-4 w-4" />
+            <Grid3X3 className="h-4 w-4" aria-hidden="true" />
           </Button>
           <Button
             variant={viewMode === 'table' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('table')}
-            className="border-0 rounded-l-none"
+            className="h-9 w-9 border-0 p-0"
+            aria-label="Visualizar contatos em tabela"
+            aria-pressed={viewMode === 'table'}
+            title="Tabela"
           >
-            <List className="h-4 w-4" />
+            <List className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
       </div>
@@ -769,9 +784,14 @@ export default function Contacts() {
       {/* Content */}
       <div className="flex-1 overflow-auto" data-tour="contacts-list">
         {state.loading.list ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="text-muted-foreground">{t('loading.contacts')}</div>
-          </div>
+          <LoadingState label={t('loading.contacts')} description="Buscando os contatos mais recentes." />
+        ) : loadError ? (
+          <ErrorState
+            title="Não foi possível carregar os contatos"
+            description={loadError}
+            retryLabel="Tentar novamente"
+            onRetry={() => loadContacts({ page: state.meta.pagination.page })}
+          />
         ) : state.contacts.length === 0 ? (
           <EmptyState
             icon={Users}
@@ -968,6 +988,6 @@ export default function Contacts() {
         onConfirm={confirmMergeContacts}
         loading={state.loading.bulk}
       />
-    </div>
+    </main>
   );
 }

@@ -12,7 +12,7 @@ import {
   Button,
 } from '@evoapi/design-system';
 import { Grid3X3, List, GitBranch } from 'lucide-react';
-import EmptyState from '@/components/base/EmptyState';
+import { EmptyState, ErrorState, LoadingState } from '@/components/base';
 
 import { useUserPermissions } from '@/hooks/useUserPermissions';
 import { pipelinesService } from '@/services/pipelines';
@@ -71,6 +71,7 @@ export default function Pipelines() {
   const [editingPipeline, setEditingPipeline] = useState<Pipeline | null>(null);
   const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
   const [pipelineToDuplicate, setPipelineToDuplicate] = useState<Pipeline | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const hasLoaded = useRef(false);
 
@@ -83,6 +84,7 @@ export default function Pipelines() {
       }
 
       setState(prev => ({ ...prev, loading: { ...prev.loading, list: true } }));
+      setLoadError(null);
 
       try {
         const requestParams: PipelinesListParams = {
@@ -113,6 +115,7 @@ export default function Pipelines() {
       } catch (error) {
         console.error('Error loading pipelines:', error);
         toast.error(t('messages.loadError'));
+        setLoadError(t('messages.loadError'));
         setState(prev => ({ ...prev, loading: { ...prev.loading, list: false } }));
       }
     },
@@ -305,7 +308,7 @@ export default function Pipelines() {
     : state.pipelines;
 
   return (
-    <div className="h-full flex flex-col p-4">
+    <main className="saiph-page h-full flex flex-col">
       <PipelinesTour />
       <div data-tour="pipelines-header">
         <PipelinesHeader
@@ -318,22 +321,28 @@ export default function Pipelines() {
 
       {/* View Mode Toggle */}
       <div className="flex items-center justify-end mb-3" data-tour="pipelines-view-toggle">
-        <div className="flex items-center border rounded-lg">
+        <div className="saiph-segmented-control" role="group" aria-label="Modo de visualização dos pipelines">
           <Button
             variant={viewMode === 'cards' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('cards')}
-            className="border-0 rounded-r-none"
+            className="h-9 w-9 border-0 p-0"
+            aria-label="Visualizar pipelines em cartões"
+            aria-pressed={viewMode === 'cards'}
+            title="Cartões"
           >
-            <Grid3X3 className="h-4 w-4" />
+            <Grid3X3 className="h-4 w-4" aria-hidden="true" />
           </Button>
           <Button
             variant={viewMode === 'table' ? 'default' : 'ghost'}
             size="sm"
             onClick={() => setViewMode('table')}
-            className="border-0 rounded-l-none"
+            className="h-9 w-9 border-0 p-0"
+            aria-label="Visualizar pipelines em tabela"
+            aria-pressed={viewMode === 'table'}
+            title="Tabela"
           >
-            <List className="h-4 w-4" />
+            <List className="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
       </div>
@@ -341,9 +350,14 @@ export default function Pipelines() {
       {/* Content */}
       <div className="flex-1 overflow-auto" data-tour="pipelines-list">
         {state.loading.list ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="text-muted-foreground">{t('loading.pipelines')}</div>
-          </div>
+          <LoadingState label={t('loading.pipelines')} description="Atualizando a visão dos pipelines." />
+        ) : loadError ? (
+          <ErrorState
+            title="Não foi possível carregar os pipelines"
+            description={loadError}
+            retryLabel="Tentar novamente"
+            onRetry={() => loadPipelines()}
+          />
         ) : filteredPipelines.length === 0 ? (
           <EmptyState
             icon={GitBranch}
@@ -469,6 +483,6 @@ export default function Pipelines() {
           loading={state.loading.duplicate}
         />
       )}
-    </div>
+    </main>
   );
 }

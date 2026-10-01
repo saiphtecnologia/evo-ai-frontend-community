@@ -21,6 +21,9 @@ import {
   List,
   GraduationCap,
   Shield,
+  BookOpen,
+  Sparkles,
+  ClipboardList,
 } from 'lucide-react';
 
 export interface MenuItem {
@@ -114,6 +117,24 @@ export const getCustomerMenuItems = (t: (key: string) => string): MenuItem[] => 
         icon: List,
         resource: 'ai_agents',
         action: 'read',
+      },
+      {
+        name: 'Base de conhecimento',
+        href: '/agents/knowledge',
+        icon: BookOpen,
+        permissions: ['knowledge.manage'],
+      },
+      {
+        name: 'Briefing de implantação',
+        href: '/agents/briefing',
+        icon: ClipboardList,
+        permissions: ['ai.manage'],
+      },
+      {
+        name: 'Personalidade do agente',
+        href: '/agents/personality',
+        icon: Sparkles,
+        permissions: ['ai.manage'],
       },
       {
         name: t('menu.agents.customTools'),

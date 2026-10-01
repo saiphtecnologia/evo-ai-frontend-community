@@ -27,9 +27,12 @@ import MicrosoftCallback from '@/pages/MicrosoftCallback';
 import SurveyResponse from '@/pages/Public/Survey/SurveyResponse';
 
 // Páginas customer
-import Dashboard from '@/pages/Customer/Dashboard';
+import Dashboard from '@/pages/Customer/SaiphDashboard';
 import Agents from '@/pages/Customer/Agents';
 import AgentEditPage from '@/pages/Customer/Agents/Agent/AgentEditPage';
+import KnowledgeBasePage from '@/pages/Customer/KnowledgeBase';
+import AgentBehaviorPage from '@/pages/Customer/AgentBehavior';
+import ImplementationBriefingPage from '@/pages/Customer/ImplementationBriefing';
 import MCPServers from '@/pages/Customer/Agents/MCPServers';
 import CustomMCPServers from '@/pages/Customer/Agents/CustomMCPServers';
 import Tools from '@/pages/Customer/Agents/Tools';
@@ -78,6 +81,10 @@ const OpenAIConfig = React.lazy(() => import('@/pages/Admin/Settings/OpenAIConfi
 const IntegrationsConfig = React.lazy(() => import('@/pages/Admin/Settings/IntegrationsConfig'));
 const InboundEmailConfig = React.lazy(() => import('@/pages/Admin/Settings/InboundEmailConfig'));
 const FrontendRuntimeConfig = React.lazy(() => import('@/pages/Admin/Settings/FrontendRuntimeConfig'));
+const SuperAdminUsagePage = React.lazy(() => import('@/pages/Admin/SuperAdminUsage'));
+const SuperAdminPlansPage = React.lazy(() => import('@/pages/Admin/SuperAdminPlans'));
+const CompanyOnboardingPage = React.lazy(() => import('@/pages/Admin/CompanyOnboarding'));
+const SuperAdminDashboardPage = React.lazy(() => import('@/pages/Admin/SuperAdminDashboard'));
 
 // Página de tutoriais
 import Tutorials from '@/pages/Customer/Tutorials';
@@ -990,6 +997,51 @@ const AppRouter = () => {
           />
 
           <Route
+            path="/agents/knowledge"
+            element={
+              <PrivateRoute>
+                <CustomerRoute>
+                  <MainLayout>
+                    <PermissionRoute permissions={['knowledge.manage']}>
+                      <KnowledgeBasePage />
+                    </PermissionRoute>
+                  </MainLayout>
+                </CustomerRoute>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/agents/briefing"
+            element={
+              <PrivateRoute>
+                <CustomerRoute>
+                  <MainLayout>
+                    <PermissionRoute permissions={['ai.manage']}>
+                      <ImplementationBriefingPage />
+                    </PermissionRoute>
+                  </MainLayout>
+                </CustomerRoute>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/agents/personality"
+            element={
+              <PrivateRoute>
+                <CustomerRoute>
+                  <MainLayout>
+                    <PermissionRoute permissions={['ai.manage']}>
+                      <AgentBehaviorPage />
+                    </PermissionRoute>
+                  </MainLayout>
+                </CustomerRoute>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
             path="/agents/new"
             element={
               <PrivateRoute>
@@ -1145,6 +1197,38 @@ const AppRouter = () => {
               </PrivateRoute>
             }
           >
+            <Route
+              path="dashboard"
+              element={
+                <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>}>
+                  <SuperAdminDashboardPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="companies/new"
+              element={
+                <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>}>
+                  <CompanyOnboardingPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="plans"
+              element={
+                <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>}>
+                  <SuperAdminPlansPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="usage"
+              element={
+                <Suspense fallback={<div className="flex items-center justify-center h-full"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>}>
+                  <SuperAdminUsagePage />
+                </Suspense>
+              }
+            />
             <Route
               path="email"
               element={

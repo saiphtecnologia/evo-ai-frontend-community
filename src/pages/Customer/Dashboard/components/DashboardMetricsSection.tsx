@@ -1,3 +1,4 @@
+// Modified by SAIPH: branded semantic dashboard emphasis and chart colors.
 import { Clock, MessageSquare, Bot, CheckCircle2, AlertTriangle, UserX, Users } from 'lucide-react';
 import { Badge, Card, CardContent, CardHeader, CardTitle } from '@evoapi/design-system';
 import type { CustomerDashboardResponse } from '@/types/analytics/dashboard';
@@ -61,7 +62,7 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
             value={data.stats.incoming_messages_count}
             subtitle={`${data.stats.outgoing_messages_count} ${t('dashboard.stats.sent')}`}
             icon={MessageSquare}
-            accentClassName="bg-fuchsia-500/20 text-fuchsia-400"
+            accentTone="brand"
             importance="primary"
             status={{
               label: tx('dashboard.status.volume', 'Volume no período'),
@@ -77,7 +78,7 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
             value={formatSeconds(data.stats.avg_first_response_time_seconds)}
             subtitle={t('dashboard.stats.realData') || 'Dados reais'}
             icon={Clock}
-            accentClassName="bg-emerald-500/20 text-emerald-400"
+            accentTone="success"
             importance="primary"
             status={responseStatus}
             tooltip={{ title: tTours('dashboard.step3.title'), content: tTours('dashboard.step3.content') }}
@@ -90,7 +91,7 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
             value={`${data.csat.avg_rating.toFixed(2)} / 5`}
             subtitle={`${data.csat.total_responses} ${t('dashboard.csat.responses') || 'avaliações'}`}
             icon={CheckCircle2}
-            accentClassName="bg-violet-500/20 text-violet-400"
+            accentTone="info"
             importance="primary"
             status={csatStatus}
             tooltip={{ title: tTours('dashboard.step4.title'), content: tTours('dashboard.step4.content') }}
@@ -103,7 +104,7 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
             value={data.follow_ups.pending}
             subtitle={`${data.follow_ups.overdue} ${tx('dashboard.status.overdue', 'em atraso')}`}
             icon={AlertTriangle}
-            accentClassName="bg-amber-500/20 text-amber-400"
+            accentTone="warning"
             importance="primary"
             status={followUpStatus}
             tooltip={{ title: tTours('dashboard.step5.title'), content: tTours('dashboard.step5.content') }}
@@ -112,7 +113,7 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
-        <Card className="xl:col-span-7 border-primary/20 bg-primary/[0.02]" data-tour="dashboard-ia-vs-human">
+        <Card className="xl:col-span-7 saiph-card-emphasis" data-tour="dashboard-ia-vs-human">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">
               <Bot className="h-4 w-4 text-primary" />
@@ -134,7 +135,7 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
                   <span className="font-semibold">{data.ai_vs_human.ai_messages_share}%</span>
                 </div>
                 <div className="h-2 rounded bg-muted overflow-hidden">
-                  <div className="h-2 bg-indigo-500" style={{ width: `${data.ai_vs_human.ai_messages_share}%` }} />
+                  <div className="h-2 bg-chart-1" style={{ width: `${data.ai_vs_human.ai_messages_share}%` }} />
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {data.ai_vs_human.ai_messages_count} {tx('dashboard.aiVsHuman.responses', 'respostas IA')}
@@ -147,7 +148,7 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
                   <span className="font-semibold">{data.ai_vs_human.human_messages_share}%</span>
                 </div>
                 <div className="h-2 rounded bg-muted overflow-hidden">
-                  <div className="h-2 bg-sky-500" style={{ width: `${data.ai_vs_human.human_messages_share}%` }} />
+                  <div className="h-2 bg-chart-2" style={{ width: `${data.ai_vs_human.human_messages_share}%` }} />
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {data.ai_vs_human.human_messages_count} {tx('dashboard.aiVsHuman.responsesHuman', 'respostas humanas')}
@@ -180,10 +181,10 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
         </Card>
 
         <div className="xl:col-span-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4">
-          <Card className="border-dashed border-amber-500/40 bg-amber-500/[0.03]" data-tour="dashboard-active-conversations">
+          <Card className="border-dashed saiph-tone-warning" data-tour="dashboard-active-conversations">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <MessageSquare className="h-4 w-4 text-amber-400" />
+                <MessageSquare className="h-4 w-4" />
                 {tx('dashboard.stats.activeConversations', 'Conversas ativas agora')}
                 <TooltipInfo title={tTours('dashboard.step7.title')} content={tTours('dashboard.step7.content')} />
               </CardTitle>
@@ -191,7 +192,7 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div className="text-2xl font-semibold">{data.stats.open_conversations}</div>
-                <Badge variant="outline" className="border-amber-500/40 text-amber-700 dark:text-amber-300 bg-amber-500/10">
+                <Badge variant="outline" className="saiph-tone-warning">
                   {data.stats.open_conversations > 0
                     ? tx('dashboard.status.monitor', 'Monitorar')
                     : tx('dashboard.status.good', 'Estável')}
@@ -203,10 +204,10 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
             </CardContent>
           </Card>
 
-          <Card className="border-dashed border-rose-500/40 bg-rose-500/[0.03]" data-tour="dashboard-unassigned">
+          <Card className="border-dashed saiph-tone-error" data-tour="dashboard-unassigned">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <UserX className="h-4 w-4 text-rose-400" />
+                <UserX className="h-4 w-4" />
                 {tx('dashboard.stats.unassignedConversations', 'Conversas sem responsável')}
                 <TooltipInfo title={tTours('dashboard.step8.title')} content={tTours('dashboard.step8.content')} />
               </CardTitle>
@@ -218,10 +219,10 @@ const DashboardMetricsSection = ({ data, t }: DashboardMetricsSectionProps) => {
                   variant="outline"
                   className={
                     unassignedStatus.tone === 'critical'
-                      ? 'border-red-500/40 text-red-700 dark:text-red-300 bg-red-500/10'
+                      ? 'saiph-tone-error'
                       : unassignedStatus.tone === 'warning'
-                        ? 'border-amber-500/40 text-amber-700 dark:text-amber-300 bg-amber-500/10'
-                        : 'border-emerald-500/40 text-emerald-700 dark:text-emerald-300 bg-emerald-500/10'
+                        ? 'saiph-tone-warning'
+                        : 'saiph-tone-success'
                   }
                 >
                   {unassignedStatus.label}

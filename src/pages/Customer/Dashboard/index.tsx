@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AlertTriangle } from 'lucide-react';
-import { Badge, Card, CardContent } from '@evoapi/design-system';
-import { BaseHeader } from '@/components/base';
+import { Badge } from '@evoapi/design-system';
+import { BaseHeader, ErrorState, LoadingState } from '@/components/base';
 import type { HeaderFilter } from '@/components/base';
 import { useLanguage } from '@/hooks/useLanguage';
 import { pipelinesService } from '@/services/pipelines';
@@ -16,6 +15,8 @@ import DashboardTrendsSection from './components/DashboardTrendsSection';
 import DashboardPerformanceSection from './components/DashboardPerformanceSection';
 import type { DashboardFilterState, DashboardOption } from './components/types';
 import { DashboardTour } from '@/tours';
+import CompanyUsageOverview from '@/components/usage/CompanyUsageOverview';
+import CompanyPlanOverview from '@/components/plans/CompanyPlanOverview';
 
 const ALL_FILTER_VALUE = '__all__';
 
@@ -241,7 +242,13 @@ const CustomerDashboardPage = () => {
   const channelShareData = useMemo(() => {
     if (!data) return [];
 
-    const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
+    const colors = [
+      'var(--saiph-chart-1)',
+      'var(--saiph-chart-2)',
+      'var(--saiph-chart-3)',
+      'var(--saiph-chart-4)',
+      'var(--saiph-chart-5)',
+    ];
 
     return data.channels.map((channel, index) => ({
       name: channel.name,
@@ -251,26 +258,31 @@ const CustomerDashboardPage = () => {
   }, [data]);
 
   if (loading) {
-    return <div className="p-4">{t('dashboard.loading') || 'Carregando dashboard...'}</div>;
+    return (
+      <main className="saiph-page">
+        <LoadingState
+          label={t('dashboard.loading') || 'Carregando dashboard...'}
+          description="Estamos organizando os indicadores da operação."
+        />
+      </main>
+    );
   }
 
   if (error || !data) {
     return (
-      <div className="p-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2 text-red-600 font-medium">
-              <AlertTriangle className="h-4 w-4" />
-              {error || (t('dashboard.error') || 'Falha ao carregar dashboard')}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <main className="saiph-page">
+        <ErrorState
+          title={t('dashboard.error') || 'Falha ao carregar dashboard'}
+          description={error || 'Os indicadores não puderam ser atualizados. Tente novamente.'}
+          retryLabel="Tentar novamente"
+          onRetry={() => loadDashboard(appliedFilters)}
+        />
+      </main>
     );
   }
 
   return (
-    <div className="h-full flex flex-col p-4 gap-6">
+    <main className="saiph-page h-full flex flex-col gap-6">
       <DashboardTour />
       <div data-tour="dashboard-header">
         <BaseHeader
@@ -288,6 +300,9 @@ const CustomerDashboardPage = () => {
           {currentPeriodLabel} ({data.period.days} dias)
         </Badge>
       </div>
+
+      <CompanyPlanOverview />
+      <CompanyUsageOverview />
 
       <div data-tour="dashboard-metrics">
         <DashboardMetricsSection data={data} t={t} />
@@ -313,7 +328,7 @@ const CustomerDashboardPage = () => {
         allValue={ALL_FILTER_VALUE}
         t={t}
       />
-    </div>
+    </main>
   );
 };
 

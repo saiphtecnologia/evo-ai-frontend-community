@@ -49,10 +49,12 @@ export default function PrimaryActionButton({
 
   const button = (
     <Button
+      type="button"
       variant={variant}
       size={size}
       onClick={onClick}
       disabled={disabled}
+      aria-disabled={disabled}
       className={cn(
         variant === 'default' && 'bg-primary hover:bg-primary/85 text-primary-foreground border-0 font-semibold',
         disabled && 'opacity-50 cursor-not-allowed',

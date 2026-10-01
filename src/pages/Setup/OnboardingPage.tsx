@@ -1,3 +1,4 @@
+// Modified by SAIPH: theme-aware onboarding using canonical SAIPH tokens.
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -5,6 +6,7 @@ import { setupService } from '@/services/setup/setupService';
 import { surveyService } from '@/services/survey/surveyService';
 import { useAuth } from '@/contexts/AuthContext';
 import { AppLogo } from '@/components/AppLogo';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -38,9 +40,9 @@ function SelectField({ label, id, value, options, onChange }: SelectFieldProps) 
           display: 'block',
           fontSize: '13px',
           fontWeight: 500,
-          color: '#fafafa',
+          color: 'var(--saiph-text-primary)',
           marginBottom: '6px',
-          fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          fontFamily: 'var(--saiph-font-sans)',
         }}
       >
         {label}
@@ -53,12 +55,12 @@ function SelectField({ label, id, value, options, onChange }: SelectFieldProps) 
           style={{
             width: '100%',
             height: '40px',
-            background: '#09090b',
-            border: value ? '0.5px solid #3f3f46' : '0.5px solid #27272a',
+            background: 'var(--saiph-surface-secondary)',
+            border: `1px solid ${value ? 'var(--saiph-border-strong)' : 'var(--saiph-border)'}`,
             borderRadius: '8px',
-            color: value ? '#fafafa' : '#a1a1aa',
+            color: value ? 'var(--saiph-text-primary)' : 'var(--saiph-text-secondary)',
             fontSize: '14px',
-            fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+            fontFamily: 'var(--saiph-font-sans)',
             padding: '0 36px 0 12px',
             appearance: 'none',
             WebkitAppearance: 'none',
@@ -67,19 +69,19 @@ function SelectField({ label, id, value, options, onChange }: SelectFieldProps) 
             transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
           }}
           onFocus={(e) => {
-            e.target.style.borderColor = '#00ffa7';
-            e.target.style.boxShadow = '0 0 0 2px rgba(0, 255, 167, 0.35)';
+            e.target.style.borderColor = 'var(--saiph-focus-ring)';
+            e.target.style.boxShadow = '0 0 0 2px color-mix(in srgb, var(--saiph-focus-ring) 32%, transparent)';
           }}
           onBlur={(e) => {
-            e.target.style.borderColor = value ? '#3f3f46' : '#27272a';
+            e.target.style.borderColor = value ? 'var(--saiph-border-strong)' : 'var(--saiph-border)';
             e.target.style.boxShadow = 'none';
           }}
         >
-          <option value="" style={{ background: '#18181b', color: '#52525b' }}>
+          <option value="" style={{ background: 'var(--saiph-surface-elevated)', color: 'var(--saiph-text-tertiary)' }}>
             Selecionar...
           </option>
           {options.map((opt) => (
-            <option key={opt} value={opt} style={{ background: '#18181b', color: '#fafafa' }}>
+            <option key={opt} value={opt} style={{ background: 'var(--saiph-surface-elevated)', color: 'var(--saiph-text-primary)' }}>
               {opt}
             </option>
           ))}
@@ -91,7 +93,7 @@ function SelectField({ label, id, value, options, onChange }: SelectFieldProps) 
             top: '50%',
             transform: 'translateY(-50%)',
             pointerEvents: 'none',
-            color: '#52525b',
+            color: 'var(--saiph-text-tertiary)',
           }}
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -208,49 +210,49 @@ export default function OnboardingPage() {
           from { opacity: 0; transform: translateY(-4px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .evo-other-input {
+        .saiph-other-input {
           margin-top: 8px;
           animation: expandIn 0.2s ease-out;
         }
-        .evo-other-input input {
+        .saiph-other-input input {
           width: 100%;
           height: 40px;
-          background: #09090b;
-          border: 0.5px solid #00ffa7;
-          box-shadow: 0 0 0 2px rgba(0, 255, 167, 0.35);
+          background: var(--saiph-surface-secondary);
+          border: 1px solid var(--saiph-focus-ring);
+          box-shadow: 0 0 0 2px color-mix(in srgb, var(--saiph-focus-ring) 32%, transparent);
           border-radius: 8px;
-          color: #fafafa;
+          color: var(--saiph-text-primary);
           font-size: 14px;
-          font-family: ui-sans-serif, system-ui, sans-serif;
+          font-family: var(--saiph-font-sans);
           padding: 0 12px;
           outline: none;
           transition: border-color 0.15s ease;
           box-sizing: border-box;
         }
-        .evo-other-input input::placeholder { color: #52525b; }
-        .evo-submit-btn {
+        .saiph-other-input input::placeholder { color: var(--saiph-text-tertiary); }
+        .saiph-submit-btn {
           width: 100%;
           height: 40px;
-          background: #00ffa7;
-          color: #000;
+          background: var(--saiph-accent);
+          color: var(--saiph-accent-foreground);
           border: none;
           border-radius: 8px;
           font-size: 14px;
           font-weight: 600;
-          font-family: ui-sans-serif, system-ui, sans-serif;
+          font-family: var(--saiph-font-sans);
           cursor: pointer;
           transition: opacity 0.2s ease, transform 0.1s ease;
         }
-        .evo-submit-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .evo-submit-btn:not(:disabled):hover { opacity: 0.88; }
-        .evo-submit-btn:not(:disabled):active { transform: scale(0.98); }
-        .evo-fields-grid {
+        .saiph-submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        .saiph-submit-btn:not(:disabled):hover { background: var(--saiph-accent-hover); }
+        .saiph-submit-btn:not(:disabled):active { background: var(--saiph-accent-active); transform: scale(0.98); }
+        .saiph-fields-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 0 1.5rem;
         }
         @media (max-width: 600px) {
-          .evo-fields-grid {
+          .saiph-fields-grid {
             grid-template-columns: 1fr;
           }
         }
@@ -259,18 +261,22 @@ export default function OnboardingPage() {
       <div
         style={{
           minHeight: '100vh',
-          background: '#09090b',
+          background: 'var(--saiph-background)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '2rem 1rem',
-          fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          fontFamily: 'var(--saiph-font-sans)',
         }}
+        data-saiph-login
       >
+        <div style={{ position: 'fixed', top: '1rem', right: '1rem', zIndex: 10 }}>
+          <ThemeToggle />
+        </div>
         <div
           style={{
-            background: '#111113',
-            border: '0.5px solid #27272a',
+            background: 'var(--saiph-surface)',
+            border: '1px solid var(--saiph-border)',
             borderRadius: '16px',
             padding: '2rem',
             width: '100%',
@@ -280,14 +286,14 @@ export default function OnboardingPage() {
         >
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.75rem' }}>
-            <AppLogo alt="Evo CRM" style={{ height: '30px' }} forceTheme="dark" />
+            <AppLogo alt="SAIPH Flow" style={{ height: '30px' }} />
           </div>
 
           {/* Title */}
-          <div style={{ fontSize: '20px', fontWeight: 600, color: '#fafafa', marginBottom: '6px' }}>
+          <div style={{ fontSize: '20px', fontWeight: 600, color: 'var(--saiph-text-primary)', marginBottom: '6px', fontFamily: 'var(--saiph-font-display)' }}>
             {t('survey.title')}
           </div>
-          <div style={{ fontSize: '13px', color: '#a1a1aa', lineHeight: '1.55', marginBottom: '1.75rem' }}>
+          <div style={{ fontSize: '13px', color: 'var(--saiph-text-secondary)', lineHeight: '1.55', marginBottom: '1.75rem' }}>
             {t('survey.subtitle')}
           </div>
 
@@ -297,7 +303,7 @@ export default function OnboardingPage() {
               style={{
                 flex: 1,
                 height: '3px',
-                background: '#27272a',
+                background: 'var(--saiph-surface-secondary)',
                 borderRadius: '99px',
                 overflow: 'hidden',
               }}
@@ -305,20 +311,20 @@ export default function OnboardingPage() {
               <div
                 style={{
                   height: '3px',
-                  background: '#00ffa7',
+                  background: 'var(--saiph-accent)',
                   borderRadius: '99px',
                   width: `${progressPct}%`,
                   transition: 'width 0.3s ease',
                 }}
               />
             </div>
-            <span style={{ fontSize: '11px', color: '#52525b', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: '11px', color: 'var(--saiph-text-tertiary)', whiteSpace: 'nowrap' }}>
               {filledCount} {t('survey.progress.of')} 6
             </span>
           </div>
 
           {/* Fields — 2 columns */}
-          <div className="evo-fields-grid">
+          <div className="saiph-fields-grid">
             {/* Left column */}
             <div>
               <SelectField
@@ -345,7 +351,7 @@ export default function OnboardingPage() {
                     display: 'block',
                     fontSize: '13px',
                     fontWeight: 500,
-                    color: '#fafafa',
+                    color: 'var(--saiph-text-primary)',
                     marginBottom: '6px',
                   }}
                 >
@@ -359,10 +365,10 @@ export default function OnboardingPage() {
                     style={{
                       width: '100%',
                       height: '40px',
-                      background: '#09090b',
-                      border: form.mainChannel ? '0.5px solid #3f3f46' : '0.5px solid #27272a',
+                      background: 'var(--saiph-surface-secondary)',
+                      border: `1px solid ${form.mainChannel ? 'var(--saiph-border-strong)' : 'var(--saiph-border)'}`,
                       borderRadius: '8px',
-                      color: form.mainChannel ? '#fafafa' : '#a1a1aa',
+                      color: form.mainChannel ? 'var(--saiph-text-primary)' : 'var(--saiph-text-secondary)',
                       fontSize: '14px',
                       fontFamily: 'ui-sans-serif, system-ui, sans-serif',
                       padding: '0 36px 0 12px',
@@ -373,19 +379,19 @@ export default function OnboardingPage() {
                       transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#00ffa7';
-                      e.target.style.boxShadow = '0 0 0 2px rgba(0, 255, 167, 0.35)';
+                      e.target.style.borderColor = 'var(--saiph-focus-ring)';
+                      e.target.style.boxShadow = '0 0 0 2px color-mix(in srgb, var(--saiph-focus-ring) 32%, transparent)';
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = form.mainChannel ? '#3f3f46' : '#27272a';
+                      e.target.style.borderColor = form.mainChannel ? 'var(--saiph-border-strong)' : 'var(--saiph-border)';
                       e.target.style.boxShadow = 'none';
                     }}
                   >
-                    <option value="" style={{ background: '#18181b', color: '#52525b' }}>
+                    <option value="" style={{ background: 'var(--saiph-surface-elevated)', color: 'var(--saiph-text-tertiary)' }}>
                       {t('survey.placeholder')}
                     </option>
                     {Array.isArray(channelOptions) && channelOptions.map((opt) => (
-                      <option key={opt} value={opt} style={{ background: '#18181b', color: '#fafafa' }}>
+                      <option key={opt} value={opt} style={{ background: 'var(--saiph-surface-elevated)', color: 'var(--saiph-text-primary)' }}>
                         {opt}
                       </option>
                     ))}
@@ -397,7 +403,7 @@ export default function OnboardingPage() {
                       top: '50%',
                       transform: 'translateY(-50%)',
                       pointerEvents: 'none',
-                      color: '#52525b',
+                      color: 'var(--saiph-text-tertiary)',
                     }}
                   >
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -407,7 +413,7 @@ export default function OnboardingPage() {
                 </div>
 
                 {form.mainChannel === t('survey.channel.other') && (
-                  <div className="evo-other-input">
+                  <div className="saiph-other-input">
                     <input
                       type="text"
                       placeholder={t('survey.channel.otherPlaceholder')}
@@ -457,18 +463,18 @@ export default function OnboardingPage() {
           </div>
 
           {/* Divider */}
-          <div style={{ borderTop: '0.5px solid #27272a', margin: '1.5rem 0 1.25rem' }} />
+          <div style={{ borderTop: '1px solid var(--saiph-border)', margin: '1.5rem 0 1.25rem' }} />
 
           {/* Submit */}
           <button
-            className="evo-submit-btn"
+            className="saiph-submit-btn"
             disabled={loading}
             onClick={handleSubmit}
           >
             {loading ? t('survey.submit.loading') : t('survey.submit.idle')}
           </button>
 
-          <div style={{ textAlign: 'center', fontSize: '11px', color: '#52525b', marginTop: '1rem' }}>
+          <div style={{ textAlign: 'center', fontSize: '11px', color: 'var(--saiph-text-tertiary)', marginTop: '1rem' }}>
             {t('survey.footer')}
           </div>
         </div>

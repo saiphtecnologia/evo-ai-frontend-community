@@ -9,39 +9,25 @@ export interface BaseStatusBadgeProps {
 
 const statusConfig = {
   active: {
-    bgClassName: 'bg-emerald-600 dark:bg-[#26533D]',
-    textClassName: 'text-white',
-    borderClassName: 'border-emerald-600 dark:border-[#26533D]',
+    className: 'saiph-tone-success',
   },
   inactive: {
-    bgClassName: 'bg-gray-500',
-    textClassName: 'text-white',
-    borderClassName: 'border-gray-500',
+    className: 'saiph-tone-secondary',
   },
   blocked: {
-    bgClassName: 'bg-red-600 dark:bg-[#6A231D]',
-    textClassName: 'text-white',
-    borderClassName: 'border-red-600 dark:border-[#6A231D]',
+    className: 'saiph-tone-error',
   },
   pending: {
-    bgClassName: 'bg-amber-500 dark:bg-yellow-500',
-    textClassName: 'text-white',
-    borderClassName: 'border-amber-500 dark:border-yellow-500',
+    className: 'saiph-tone-warning',
   },
   success: {
-    bgClassName: 'bg-emerald-600 dark:bg-[#26533D]',
-    textClassName: 'text-white',
-    borderClassName: 'border-emerald-600 dark:border-[#26533D]',
+    className: 'saiph-tone-success',
   },
   error: {
-    bgClassName: 'bg-red-600 dark:bg-[#6A231D]',
-    textClassName: 'text-white',
-    borderClassName: 'border-red-600 dark:border-[#6A231D]',
+    className: 'saiph-tone-error',
   },
   warning: {
-    bgClassName: 'bg-amber-500 dark:bg-yellow-500',
-    textClassName: 'text-white',
-    borderClassName: 'border-amber-500 dark:border-yellow-500',
+    className: 'saiph-tone-warning',
   }
 };
 
@@ -54,11 +40,12 @@ export default function BaseStatusBadge({ status, text, className }: BaseStatusB
     <span
       className={cn(
         'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
-        config.bgClassName,
-        config.textClassName,
+        'gap-1.5 border',
+        config.className,
         className
       )}
     >
+      <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
       {text || defaultText}
     </span>
   );

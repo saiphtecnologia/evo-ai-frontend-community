@@ -1,3 +1,4 @@
+// Modified by SAIPH: branded authentication surface and theme selector.
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -36,6 +37,7 @@ import { type Locale } from '@/i18n/config';
 import { useGlobalConfig } from '@/contexts/GlobalConfigContext';
 
 import { AppLogo } from '@/components/AppLogo';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const Auth: React.FC = () => {
   const { login: authLogin, mfaState, verifyMfaCode, clearMfaState, setMfaRequired } = useAuth();
@@ -410,10 +412,11 @@ export const Auth: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-t from-primary/20 via-background/95 to-background relative">
+    <div className="min-h-screen flex flex-col relative" data-saiph-login>
       <div className="flex-1 flex items-center justify-center p-4">
-        {/* Seletor de idiomas no canto superior direito */}
-        <div className="absolute top-4 right-4 z-10">
+        {/* Modified by SAIPH: language and three-mode theme controls. */}
+        <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+          <ThemeToggle />
           <Select value={currentLanguage} onValueChange={handleLanguageChange}>
             <SelectTrigger>
               <Globe className="h-4 w-4 text-primary" />
@@ -432,11 +435,11 @@ export const Auth: React.FC = () => {
         <div className="w-full max-w-md space-y-6">
           {/* Logo */}
           <div className="text-center">
-            <AppLogo className="h-10 mx-auto" />
+            <AppLogo className="h-11 mx-auto max-w-[240px]" />
           </div>
 
           {/* Formulário */}
-          <div className="bg-background/80 backdrop-blur-sm border rounded-lg p-6 shadow-lg">
+          <div className="border p-6 sm:p-8" data-saiph-login-card>
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <TabsList className={`grid w-full ${enableAccountSignup ? 'grid-cols-3' : 'grid-cols-2'}`}>
                 <TabsTrigger value="login">{t('auth.tabs.login')}</TabsTrigger>

@@ -1,0 +1,10 @@
+<!-- Original SAIPH Flow brand asset. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 276 64" role="img" aria-labelledby="title desc">
+  <title id="title">SAIPH Flow</title>
+  <desc id="desc">Símbolo de fluxo em verde SAIPH e nome SAIPH Flow em branco.</desc>
+  <rect width="64" height="64" rx="16" fill="#000000"/>
+  <path d="M17 34.5 29.2 16h8.7L27 31h20L34.8 49h-8.7L37 34.5H17Z" fill="#d8ef30"/>
+  <circle cx="46" cy="17" r="3" fill="#FFFFFF"/>
+  <text x="80" y="39" fill="#FFFFFF" font-family="Montserrat,Arial,sans-serif" font-size="28" font-weight="650" letter-spacing="1.2">SAIPH</text>
+  <text x="181" y="39" fill="#B8B8B8" font-family="Roboto,Arial,sans-serif" font-size="24" font-weight="400">Flow</text>
+</svg>

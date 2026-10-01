@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, TrendingDown, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface BaseStatsCardProps {
@@ -99,16 +99,16 @@ export default function BaseStatsCard({
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         }).format(val);
-      
+
       case 'percentage':
         return `${val}%`;
-      
+
       case 'number':
         return new Intl.NumberFormat('pt-BR').format(val);
-      
+
       case 'custom':
         return val.toString() + (suffix || '');
-      
+
       default:
         return val.toString();
     }
@@ -117,11 +117,11 @@ export default function BaseStatsCard({
   // Calcular diferença percentual se previousValue for fornecido
   const calculateChange = (): { percentage: number; isPositive: boolean } | null => {
     if (previousValue === undefined || typeof value !== 'number') return null;
-    
+
     if (previousValue === 0) {
       return { percentage: value > 0 ? 100 : 0, isPositive: value >= 0 };
     }
-    
+
     const percentage = ((value - previousValue) / previousValue) * 100;
     return { percentage: Math.abs(percentage), isPositive: percentage >= 0 };
   };
@@ -130,13 +130,21 @@ export default function BaseStatsCard({
   const colorScheme = colorVariants[color];
 
   return (
-    <div 
+    <div
       className={cn(
         "bg-card rounded-lg p-4 border transition-all duration-200",
         onClick && "cursor-pointer hover:shadow-md hover:border-primary/20",
         className
       )}
       onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={event => {
+        if (onClick && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          onClick();
+        }
+      }}
     >
       <div className="flex items-center">
         {/* Ícone */}
@@ -152,7 +160,7 @@ export default function BaseStatsCard({
           <p className="text-xs font-medium text-muted-foreground mb-1">
             {title}
           </p>
-          
+
           <div className="flex items-baseline gap-2">
             <p className={cn(
               "text-lg font-semibold truncate",
@@ -164,11 +172,15 @@ export default function BaseStatsCard({
             {/* Indicador de mudança */}
             {change && (
               <span className={cn(
-                "text-xs font-medium px-1.5 py-0.5 rounded-full",
-                change.isPositive 
-                  ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
-                  : "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400"
+                "inline-flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded-full",
+                change.isPositive
+                  ? "saiph-tone-success"
+                  : "saiph-tone-error"
               )}>
+                {change.isPositive
+                  ? <TrendingUp className="h-3 w-3" aria-hidden="true" />
+                  : <TrendingDown className="h-3 w-3" aria-hidden="true" />}
+                <span className="sr-only">{change.isPositive ? 'Aumento de' : 'Queda de'}</span>
                 {change.isPositive ? '+' : '-'}{change.percentage.toFixed(1)}%
               </span>
             )}

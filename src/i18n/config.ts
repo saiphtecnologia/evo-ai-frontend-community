@@ -1,3 +1,4 @@
+// Modified by SAIPH: runtime product-brand substitution for shipped locales.
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
@@ -606,10 +607,28 @@ const resources = {
   },
 };
 
+// Modified by SAIPH: replace only product-brand references. Provider names such
+// as Evolution API remain intact because they identify third-party integrations.
+const applySaiphBranding = (value: unknown): unknown => {
+  if (typeof value === 'string') {
+    return value
+      .replace(/EVO CRM/gi, 'SAIPH Flow')
+      .replace(/Evolution Foundation/g, 'SAIPH');
+  }
+  if (Array.isArray(value)) return value.map(applySaiphBranding);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, applySaiphBranding(entry)]),
+    );
+  }
+  return value;
+};
+
+const brandedResources = applySaiphBranding(resources) as typeof resources;
 const initialLanguage = detectLanguage();
 
 i18n.use(initReactI18next).init({
-  resources,
+  resources: brandedResources,
   lng: initialLanguage,
   fallbackLng: defaultLocale,
   debug: false, // Set to true for debugging

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useId } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
 import {
   Button,
@@ -78,17 +78,18 @@ export default function BaseHeader({
   children,
 }: BaseHeaderProps) {
   const { t } = useLanguage('common');
+  const searchId = useId();
   const placeholder = searchPlaceholder || t('base.header.searchPlaceholder');
   const hasSelection = selectedCount > 0;
   const visibleSecondaryActions = secondaryActions.filter(action => action.show !== false);
   const visibleMoreActions = moreActions.filter(action => action.show !== false);
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <header className={`space-y-5 ${className}`}>
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         {/* Title Section */}
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight leading-8 text-sidebar-foreground mb-2">{title}</h1>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl font-semibold tracking-tight leading-8 text-sidebar-foreground mb-1">{title}</h1>
           {subtitle && (
             <p className="text-sm leading-5 text-sidebar-foreground/70">{subtitle}</p>
           )}
@@ -96,7 +97,7 @@ export default function BaseHeader({
 
         {/* Primary Action */}
         {primaryAction && primaryAction.show !== false && (
-          <div className="flex-shrink-0" data-tour={primaryAction.dataTour}>
+          <div className="flex-shrink-0 [&>button]:w-full sm:[&>button]:w-auto" data-tour={primaryAction.dataTour}>
             <PrimaryActionButton
               label={primaryAction.label}
               icon={primaryAction.icon}
@@ -113,13 +114,16 @@ export default function BaseHeader({
 
       {/* Search and Filter Row */}
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-3 flex-1">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3 flex-1">
           {/* Search */}
           {onSearchChange && (
             <div className="relative flex-1 max-w-md" data-tour={searchDataTour}>
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/60" />
+              <label className="sr-only" htmlFor={searchId}>{placeholder}</label>
+              <Search aria-hidden="true" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/60" />
               <Input
+                id={searchId}
                 type="search"
+                aria-label={placeholder}
                 placeholder={placeholder}
                 value={searchValue}
                 onChange={(e) => onSearchChange(e.target.value)}
@@ -152,7 +156,7 @@ export default function BaseHeader({
         </div>
 
         {/* Secondary Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {visibleSecondaryActions.map((action, index) => {
             const renderIcon = () => {
               if (!action.icon) return null;
@@ -175,6 +179,7 @@ export default function BaseHeader({
                 variant={action.variant || 'outline'}
                 size="sm"
                 onClick={action.onClick}
+                disabled={action.disabled}
                 className="bg-sidebar border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent"
                 data-tour={action.dataTour}
               >
@@ -192,6 +197,7 @@ export default function BaseHeader({
                   variant="outline"
                   size="sm"
                   className="bg-sidebar border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent"
+                  aria-label="Mais ações"
                 >
                   <MoreVertical className="h-4 w-4" />
                 </Button>
@@ -220,7 +226,8 @@ export default function BaseHeader({
                     <DropdownMenuItem
                       key={index}
                       onClick={action.onClick}
-                      className={`hover:bg-sidebar-accent ${action.variant === 'destructive' ? 'text-red-400' : ''}`}
+                      disabled={action.disabled}
+                      className={`hover:bg-sidebar-accent ${action.variant === 'destructive' ? 'text-destructive' : ''}`}
                     >
                       {renderIcon()}
                       {action.label}
@@ -235,8 +242,8 @@ export default function BaseHeader({
 
       {/* Selection Bar */}
       {hasSelection && (
-        <div className="flex items-center justify-between rounded-lg bg-sidebar-accent/50 border border-sidebar-border px-4 py-2">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-3 rounded-lg bg-sidebar-accent/50 border border-sidebar-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between" role="status" aria-live="polite">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium text-sidebar-foreground">
               {t('base.header.selected', { count: selectedCount })}
             </span>
@@ -253,7 +260,7 @@ export default function BaseHeader({
             )}
           </div>
           {bulkActions.length > 0 && (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {bulkActions.map((action, index) => (
                 <Button
                   key={index}
@@ -294,6 +301,7 @@ export default function BaseHeader({
                 variant="ghost"
                 size="sm"
                 onClick={filter.onRemove}
+                aria-label={`${t('base.header.clear')}: ${filter.label} ${filter.value}`}
                 className="ml-1 h-4 w-4 p-0 hover:bg-transparent text-sidebar-foreground/60 hover:text-sidebar-foreground"
               >
                 <X className="h-3 w-3" />
@@ -305,6 +313,6 @@ export default function BaseHeader({
 
       {/* Custom Content */}
       {children}
-    </div>
+    </header>
   );
 }

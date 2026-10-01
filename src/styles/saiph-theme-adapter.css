@@ -1,0 +1,293 @@
+/*
+ * SAIPH modification of the Evo frontend presentation layer.
+ * Maps the canonical --saiph-* contract to the existing design-system API.
+ */
+
+:root,
+:root[data-theme='dark'] {
+  --background: var(--saiph-background);
+  --foreground: var(--saiph-text-primary);
+  --card: var(--saiph-surface);
+  --card-foreground: var(--saiph-text-primary);
+  --popover: var(--saiph-surface-elevated);
+  --popover-foreground: var(--saiph-text-primary);
+  --primary: var(--saiph-accent);
+  --primary-foreground: var(--saiph-accent-foreground);
+  --secondary: var(--saiph-surface-secondary);
+  --secondary-foreground: var(--saiph-text-primary);
+  --muted: var(--saiph-surface-secondary);
+  --muted-foreground: var(--saiph-text-secondary);
+  --accent: var(--saiph-surface-secondary);
+  --accent-foreground: var(--saiph-text-primary);
+  --destructive: var(--saiph-error);
+  --destructive-foreground: var(--saiph-text-primary);
+  --border: var(--saiph-border);
+  --input: var(--saiph-border-strong);
+  --ring: var(--saiph-focus-ring);
+  --chart-1: var(--saiph-chart-1);
+  --chart-2: var(--saiph-chart-2);
+  --chart-3: var(--saiph-chart-3);
+  --chart-4: var(--saiph-chart-4);
+  --chart-5: var(--saiph-chart-5);
+  --radius: var(--saiph-radius-md);
+  --sidebar: var(--saiph-surface);
+  --sidebar-foreground: var(--saiph-text-primary);
+  --sidebar-primary: var(--saiph-accent);
+  --sidebar-primary-foreground: var(--saiph-accent-foreground);
+  --sidebar-accent: var(--saiph-surface-secondary);
+  --sidebar-accent-foreground: var(--saiph-text-primary);
+  --sidebar-border: var(--saiph-border);
+  --sidebar-ring: var(--saiph-focus-ring);
+
+  --font-sans: var(--saiph-font-sans);
+  --default-font-family: var(--saiph-font-sans);
+}
+
+html {
+  background: var(--saiph-background);
+  color-scheme: dark;
+  font-family: var(--saiph-font-sans);
+  min-width: 20rem;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+body {
+  background: var(--saiph-background);
+  color: var(--saiph-text-primary);
+  font-family: var(--saiph-font-sans);
+  font-size: var(--saiph-font-size-md);
+  line-height: var(--saiph-line-height-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+[data-saiph-heading] {
+  font-family: var(--saiph-font-display);
+  letter-spacing: -0.018em;
+}
+
+::selection {
+  background: var(--saiph-selection);
+  color: var(--saiph-selection-foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--saiph-focus-ring);
+  outline-offset: 2px;
+}
+
+:where(button, [role='button'], input, select, textarea, a) {
+  transition:
+    color var(--saiph-motion-fast) var(--saiph-ease-standard),
+    background-color var(--saiph-motion-fast) var(--saiph-ease-standard),
+    border-color var(--saiph-motion-fast) var(--saiph-ease-standard),
+    opacity var(--saiph-motion-fast) var(--saiph-ease-standard),
+    box-shadow var(--saiph-motion-fast) var(--saiph-ease-standard),
+    transform var(--saiph-motion-fast) var(--saiph-ease-standard);
+}
+
+:where(button, [role='button'], input, select, textarea):disabled,
+:where([aria-disabled='true']) {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+:where(input, select, textarea):not([type='checkbox']):not([type='radio']) {
+  min-height: var(--saiph-control-height);
+}
+
+.saiph-page {
+  width: 100%;
+  max-width: var(--saiph-content-max);
+  margin-inline: auto;
+  padding: var(--saiph-space-4);
+}
+
+.saiph-segmented-control {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--saiph-space-1);
+  padding: var(--saiph-space-1);
+  border: 1px solid var(--saiph-border);
+  border-radius: var(--saiph-radius-md);
+  background: var(--saiph-surface-secondary);
+}
+
+.saiph-state-panel {
+  display: flex;
+  min-height: 15rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--saiph-space-3);
+  padding: var(--saiph-space-8) var(--saiph-space-6);
+  border: 1px solid var(--saiph-border);
+  border-radius: var(--saiph-radius-lg);
+  background: var(--saiph-surface);
+  text-align: center;
+}
+
+.saiph-state-icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border-radius: var(--saiph-radius-md);
+  background: var(--saiph-surface-secondary);
+  color: var(--saiph-text-secondary);
+}
+
+.saiph-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--saiph-skeleton);
+}
+
+.saiph-skeleton::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--saiph-skeleton-highlight), transparent);
+  animation: saiph-skeleton-shimmer 1.4s infinite;
+}
+
+@keyframes saiph-skeleton-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Product chrome */
+[data-saiph-shell] {
+  background: var(--saiph-background);
+}
+
+[data-saiph-topbar] {
+  background: color-mix(in srgb, var(--saiph-surface) 92%, transparent);
+  backdrop-filter: saturate(140%) blur(16px);
+}
+
+[data-saiph-sidebar] {
+  background: var(--saiph-surface);
+}
+
+[data-saiph-login] {
+  background:
+    radial-gradient(circle at 50% -10%, color-mix(in srgb, var(--saiph-accent) 10%, transparent), transparent 38%),
+    var(--saiph-background);
+}
+
+[data-saiph-login-card] {
+  background: color-mix(in srgb, var(--saiph-surface-elevated) 94%, transparent);
+  border-color: var(--saiph-border);
+  border-radius: var(--saiph-radius-lg);
+  box-shadow: var(--saiph-shadow-lg);
+}
+
+[data-saiph-brand-lockup] {
+  filter: drop-shadow(0 8px 24px rgb(0 0 0 / 12%));
+}
+
+/* Dashboard and feedback states */
+.saiph-card-emphasis {
+  border-color: color-mix(in srgb, var(--saiph-accent) 32%, var(--saiph-border));
+  background: color-mix(in srgb, var(--saiph-accent) 3%, var(--saiph-surface));
+}
+
+.saiph-tone-brand,
+.saiph-tone-success,
+.saiph-tone-warning,
+.saiph-tone-error,
+.saiph-tone-info,
+.saiph-tone-secondary {
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+}
+
+.saiph-tone-brand {
+  background: color-mix(in srgb, var(--saiph-accent) 14%, transparent);
+  color: var(--saiph-accent);
+}
+
+:root[data-theme='light'] .saiph-tone-brand {
+  color: var(--saiph-focus-ring);
+}
+
+.saiph-tone-success {
+  background: color-mix(in srgb, var(--saiph-success) 12%, transparent);
+  color: var(--saiph-success);
+}
+
+.saiph-tone-warning {
+  background: color-mix(in srgb, var(--saiph-warning) 12%, transparent);
+  color: var(--saiph-warning);
+}
+
+.saiph-tone-error {
+  background: color-mix(in srgb, var(--saiph-error) 12%, transparent);
+  color: var(--saiph-error);
+}
+
+.saiph-tone-info {
+  background: color-mix(in srgb, var(--saiph-info) 12%, transparent);
+  color: var(--saiph-info);
+}
+
+.saiph-tone-secondary {
+  background: var(--saiph-surface-secondary);
+  color: var(--saiph-text-secondary);
+}
+
+/* Scrollbars use semantic values in both themes. */
+* {
+  scrollbar-color: color-mix(in srgb, var(--saiph-text-secondary) 42%, transparent) transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--saiph-text-secondary) 42%, transparent) !important;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: color-mix(in srgb, var(--saiph-text-primary) 42%, transparent) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .saiph-skeleton::after {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  :where(button, [role='button'], input, select, textarea) {
+    min-height: var(--saiph-touch-target);
+  }
+}
+
+@media (max-width: 640px) {
+  .saiph-page {
+    padding: var(--saiph-space-4);
+  }
+
+  [data-saiph-login-card] {
+    border-radius: var(--saiph-radius-md);
+    box-shadow: var(--saiph-shadow-md);
+  }
+}
